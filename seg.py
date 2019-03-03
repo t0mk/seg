@@ -4,6 +4,8 @@ import os
 import sys
 from math import sqrt
 import numpy as np
+import io
+
 
 def read_training(d):
     tr = {}
@@ -90,6 +92,7 @@ class Traj:
         y = self.ys[ix] + self.yd[ix]*segoffs
         return x,y        
 
+
 class SampleSet:
     def __init__(self, n, ll):
         # ll is list of tuples [x_array,y_array] for every trajectory in sample
@@ -115,8 +118,10 @@ class SampleSet:
             xs, ys = t.getPoints(offs)            
             xm.append(xs)
             ym.append(ys)
-        
+        ym = np.ma.masked_array(ym)
+        xm = np.ma.masked_array(xm)
         self.xp, self.yp = zip(*rdp(list(zip(np.mean(xm, axis=0),np.mean(ym, axis=0))), eps))
+        #self.xp, self.yp = np.mean(xm, axis=0),np.mean(ym, axis=0)
     
     def endpoints(self):
         cs = np.array([[self.trajs[0].xs[0],self.trajs[0].xs[-1]],
@@ -144,7 +149,7 @@ class SampleSet:
         for i,l in enumerate(clabs[:len(clabs)//2]):
             if l == 1:
                 oldT = self.trajs[i]                
-                reversedTraj = (np.flip(oldT.xs), np.flip(oldT.ys))
+                reversedTraj = (np.flip(oldT.xs, axis=0), np.flip(oldT.ys, axis=0))
                 self.trajs[i] = Traj(reversedTraj)
                 
     def zdist(self):
@@ -179,20 +184,32 @@ def zscore(l):
         return np.full(len(l),0.)
     return (np.array(l)  - np.mean(l)) / np.std(l)
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("use", sys.argv[0], "<data_directory> > solution.txt", file=sys.stderr)
-        sys.exit(1)
-    ts = read_training(sys.argv[1])
-    # limiting Z-scores for length
-    lenlim = (-1.3, 1.95)
-    # limiting zscores for distance (only cuts the large values)
-    dislim = (-8., 1.9)
+def getResults(d, lenlim, dislim, eps):
+    datastring = io.StringIO()
+    ts = read_training(d)
     limits = (lenlim, dislim)
     for i in sorted(ts.keys()):
         ss = SampleSet(i,ts[i])
         # .01 is eps for Ramer–Douglas–Peucker algorithm
-        ss.getAvg(limits, .01)
+        ss.getAvg(limits, eps)
         for x,y in zip(ss.xp, ss.yp):
-            print("%1.7f" % x,"%1.7f" % y)
-        print()
+            print("%1.7f" % x,"%1.7f" % y, file=datastring)
+        print(file=datastring)
+    ret = datastring.getvalue()
+    datastring.close()
+    return ret
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("use", sys.argv[0], "<data_directory> > solution.txt", file=sys.stderr)
+        sys.exit(1)
+    # limiting Z-scores for length
+    lenlim = (-1, 21)
+    # limiting zscores for distance (only cuts the large values)
+    dislim = (-8000., .5)
+    dislim = (-800., 1.0263)
+    lenlim = (-0.5132, .2789)
+    eps = .126
+    r = getResults(sys.argv[1], lenlim, dislim, eps)
+    print(r)
