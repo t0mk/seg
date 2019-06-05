@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-# run this as
-# $ ./seg.py <directory_with_training_data> > solution.txt
-#
-# .. it will print solution to stdout
-
 import os
 import sys
 from math import sqrt
@@ -76,12 +71,19 @@ def median(lst):
     index = (lstLen - 1) // 2    
     return sortedLst[index] 
 
+class OnlyOnePointError(Exception):
+    pass
 
 class Traj:
     def __init__(self,xsys):
         xs, ys = xsys
-        self.xs = np.array(xs)
-        self.ys = np.array(ys)
+        a = np.array(xsys).T
+        _, filtered = np.unique(a, return_index=True,axis=0)
+
+        if len(filtered) < 2:
+            raise OnlyOnePointError()
+        self.xs = np.array(xs)[sorted(filtered)]
+        self.ys = np.array(ys)[sorted(filtered)]
         self.xd = np.diff(xs)
         self.yd = np.diff(ys)
         self.dists = np.linalg.norm([self.xd, self.yd],axis=0)
@@ -101,7 +103,13 @@ class Traj:
 class SampleSet:
     def __init__(self, n, ll):
         # ll is list of tuples [x_array,y_array] for every trajectory in sample
-        self.trajs = [Traj(l) for l in ll]
+        self.trajs = []
+        for l in ll:
+            try:
+                t = Traj(l)
+            except OnlyOnePointError:
+                continue
+            self.trajs.append(t)
         self.n = n
         self.xp = None
         self.yp = None
@@ -138,8 +146,6 @@ class SampleSet:
         self.l = l
         self.filtix = np.intersect1d(lenix,disix)
         
-
-
     def getAvg(self, dismax, lenlim, eps):
         self.eps = eps
         self.endpoints()        
@@ -161,9 +167,6 @@ class SampleSet:
             xm.append(xs)
             ym.append(ys)
         self.xp, self.yp = zip(*rdp(list(zip(np.mean(xm, axis=0),np.mean(ym, axis=0))), eps))
-        #self.xp, self.yp = np.mean(xm, axis=0), np.mean(ym, axis=0)
-        #tx = truth[self.n][0]
-        #ty = truth[self.n][1]
         #self.err = disterr(self.xp, self.yp, tx,ty)
     
     def endpoints(self):
@@ -258,12 +261,17 @@ def getResults(d, dismax, lenlim, eps):
     datastring.close()
     return ret
 
-
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("use", sys.argv[0], "<data_directory> > solution.txt", file=sys.stderr)
-        print("for example", sys.argv[0], "training_data > tkarasek.txt", file=sys.stderr)
         sys.exit(1)
-    r = getResults(sys.argv[1], 2.13 ,(-1.23,1.8129), .0755)
-    print(r)
+    # limiting Z-scores for length
+    lenlim = (-1, 21)
+    # limiting zscores for distance (only cuts the large values)
 
+    dismax = 2.13 
+    lenlim = (-1.23,1.8129)
+    eps =.0755
+
+    r = getResults(sys.argv[1], dismax, lenlim, eps)
+    print(r)

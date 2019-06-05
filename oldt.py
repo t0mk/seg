@@ -58,26 +58,25 @@ def test(strPred):
     co = j["server"]["finalScore"]["av_pred_count"]
     return sc, co
 
-def onerun(d, zmax, lenlim, eps):
-    sp = seg.getResults(sys.argv[1], zmax, lenlim, eps)
+def onerun(d, lenlim, dislim, eps):
+    sp = seg.getResults(sys.argv[1], lenlim, dislim, eps)
     sc, co = test(sp)
-    print("DM: %.4f, L:%.4f-%.4f E: %.4f, SCORE: %.4f, COUNT: %.4f" %
-          (zmax, lenlim[0], lenlim[1], eps, sc, co))
+    print("L: %.4f-%.4f, D: %4.1f-%.4f, E: %.4f, SCORE: %.4f, COUNT: %.4f" %
+          (lenlim[0], lenlim[1], dislim[0], dislim[1], eps, sc, co))
 
 
 if __name__ == "__main__":
     #arith mean
+    #dislim = (-800., 1.0263)
     #lenlim = (-0.5132, .2789)
     #eps = .126
     #onerun(sys.argv[1], lenlim, dislim, eps)
     #sys.exit(0)
-    #dismax = 1.29
-    #dismax = 1.4316
-    lenlim = (-2, 2)
-    for d in np.linspace(.01,.05 ,40): # .04-.08
-        #onerun(sys.argv[1],1.7158 , (-1.47,1.87), .0755)
-        #onerun(sys.argv[1],1.7158 , (-1.23,1.87), .0755)
-        onerun(sys.argv[1], 2.13, (-1.23,1.8129), .0755)
+    for d in np.linspace(-2, 1, 30):
+        dislim = (-800.,1,8996)
+        lenlim = (d,1.7655)
+        eps = .08
+        onerun(sys.argv[1], lenlim, dislim, eps)
 
 
 

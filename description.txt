@@ -1,0 +1,3 @@
+My paper is a jupyter notebook at
+
+https://gist.github.com/t0mk/eb640963d7d64e14d69016e5a3e93fd6

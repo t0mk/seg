@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-# run this as
-# $ ./seg.py <directory_with_training_data> > solution.txt
-#
-# .. it will print solution to stdout
-
 import os
 import sys
 from math import sqrt
@@ -87,6 +82,9 @@ class Traj:
         self.dists = np.linalg.norm([self.xd, self.yd],axis=0)
         self.cuts = np.cumsum(self.dists)
         self.d = np.hstack([0,self.cuts])
+        self.filtered = None
+        self.lenout = None
+        self.disout = None
         
     def getPoints(self, offsets):        
         offdists = offsets * self.cuts[-1]
@@ -106,65 +104,39 @@ class SampleSet:
         self.xp = None
         self.yp = None
         self.err= None
-        self.d = None
-        self.filtix = None
-        self.lenoutix = None
-        self.disoutix = None
-        self.eps = None
-
-    def getRawAvg(self):
-        trajLen = median([len(t.xs) for t in self.trajs])
-        offs = np.linspace(0,1,trajLen)
+        
+    def getAvg(self, lims, eps):
+        self.endpoints()
+        if len(self.trajs) > 3:
+            self.filtered, self.lenout, self.disout = self.getfilteredtrajs(lims)
+        else:
+            self.filtered, self.lenout, self.disout = self.trajs, [], []
+        #print(len(self.filtered))
+        if len(self.filtered)<2:
+            nbest = 3
+            # a lot of noise in this sample group. Pick 3 closest to each other
+            distrank = np.argsort(self.zdist())
+            self.lenout = []
+            self.disout = [self.trajs[i] for i in distrank[nbest:]]
+            self.filtered = [self.trajs[i] for i in distrank[:nbest]]                        
+        
+        trajLen = median([len(t.xs) for t in self.filtered])
+        offs = np.linspace(0,1,trajLen*30)
         xm = []
         ym = []
-        for t in self.trajs:
-            xs, ys = t.getPoints(offs)
-            xm.append(xs)
-            ym.append(ys)        
-        xp, yp = np.mean(xm, axis=0), np.mean(ym, axis=0)
-        return xp, yp
-
-    def getFiltered(self, dismax, lenlim):
-        xa, ya = self.getRawAvg()
-        d = zscore(np.array([disterr(t.xs, t.ys, xa, ya) for t in self.trajs]))
-        l = self.zlen()
-        self.lenoutix = np.where((l<lenlim[0])|(l>lenlim[1]))[0]
-        
-        lenix = np.where((l>lenlim[0])&(l<lenlim[1]))[0]
-        self.disoutix = np.where(d>dismax)[0]
-        
-        disix = np.where(d<dismax)[0]
-        self.d = d
-        self.l = l
-        self.filtix = np.intersect1d(lenix,disix)
-        
-
-
-    def getAvg(self, dismax, lenlim, eps):
-        self.eps = eps
-        self.endpoints()        
-        self.getFiltered(dismax, lenlim)
-
-        if len(self.filtix)<5:
-            nbest = 4
-            distrank = np.argsort(self.d)
-            self.disoutix = distrank[nbest:]            
-            self.lenoutix = []
-            self.filtix = distrank[:nbest]
-        filtered = [self.trajs[i] for i in self.filtix]
-        trajLen = median([len(t.xs) for t in filtered])
-        offs = np.linspace(0,1,trajLen*10)
-        xm = []
-        ym = []
-        for t in filtered:
+        for t in self.filtered:
             xs, ys = t.getPoints(offs)            
             xm.append(xs)
             ym.append(ys)
-        self.xp, self.yp = zip(*rdp(list(zip(np.mean(xm, axis=0),np.mean(ym, axis=0))), eps))
-        #self.xp, self.yp = np.mean(xm, axis=0), np.mean(ym, axis=0)
+        ym = np.ma.masked_array(ym)
+        xm = np.ma.masked_array(xm)
+        #self.xp, self.yp = zip(*rdp(list(zip(np.mean(xm, axis=0),np.mean(ym, axis=0))), eps))
+        self.xp, self.yp = np.mean(xm, axis=0), np.mean(ym, axis=0)
         #tx = truth[self.n][0]
         #ty = truth[self.n][1]
+        
         #self.err = disterr(self.xp, self.yp, tx,ty)
+        #self.xp, self.yp = np.mean(xm, axis=0),np.mean(ym, axis=0)
     
     def endpoints(self):
         cs = np.array([[self.trajs[0].xs[0],self.trajs[0].xs[-1]],
@@ -193,13 +165,37 @@ class SampleSet:
             if l == 1:
                 oldT = self.trajs[i]                
                 reversedTraj = (np.flip(oldT.xs, axis=0), np.flip(oldT.ys, axis=0))
-                self.trajs[i] = Traj(reversedTraj)                
-    
+                self.trajs[i] = Traj(reversedTraj)
+                
+    def zdist(self):
+        xms = np.array([(t.xs[0]+t.xs[-1])/2 for t in self.trajs])
+        yms = np.array([(t.ys[0]+t.ys[-1])/2 for t in self.trajs])
+        xm = np.mean(xms)
+        ym = np.mean(yms)
+        return zscore(np.linalg.norm(np.array([[xm],[ym]]) - np.array([xms,yms]), axis=0))
+        
     def zlen(self):
         ls = np.array([t.cuts[-1] for t in self.trajs])
         return zscore(ls)
         
-    def pax(self, ax):
+    def getfilteredtrajs(self, lims):
+        zl = self.zlen()
+        zd = self.zdist()
+        lenlim, dislim= lims
+
+        lenout = [self.trajs[i] for i in np.where((zl<lenlim[0])|(zl>lenlim[1]))[0]]
+        disout = [self.trajs[i] for i in np.where((zd<dislim[0])|(zd>dislim[1]))[0]]
+        
+        lenix = (zl>lenlim[0])&(zl<lenlim[1])
+        disix = (zd>dislim[0])&(zd<dislim[1])
+
+        filtix = np.where(lenix&disix)[0]
+
+        filtered = [self.trajs[i] for i in filtix]
+        return filtered, lenout, disout
+    
+    
+    def pax(self, ax, lims, eps):
         
         ax.set_xlim(0,1)
         ax.set_xticks([])
@@ -208,12 +204,12 @@ class SampleSet:
                 
         for _, t in enumerate(self.trajs):    
             ax.plot(t.xs,t.ys, c="b", marker="o", markersize=2)
-        for n, t in enumerate([self.trajs[i] for i in self.disoutix]):    
-            ax.plot(t.xs,t.ys, c="g")
-        for n, t in enumerate([self.trajs[i] for i in self.lenoutix]):    
-            ax.plot(t.xs,t.ys, c="cyan")
-        for n, t in enumerate([self.trajs[i] for i in np.intersect1d(self.lenoutix,self.disoutix)]):    
-            ax.plot(t.xs,t.ys, c="magenta")
+        
+        if len(self.trajs) > 3:    
+            for n, t in enumerate(self.lenout):    
+                ax.plot(t.xs,t.ys, c="cyan") 
+            for n, t in enumerate(self.disout):    
+                ax.plot(t.xs,t.ys, c="g")
         if self.xp is not None:
             ax.plot(self.xp,self.yp, marker='D', color='r', linewidth=3)            
         tx = truth[self.n][0]
@@ -222,9 +218,13 @@ class SampleSet:
             
         
         if self.xp is not None:
-            ax.set_xlabel("#%d err:%.3f eps:%.3f,t: %d, f: %d out: %d" % 
-                          (self.n, self.err, self.eps, len(self.trajs), len(self.filtix),
-                           len(self.disoutix)+len(self.lenoutix)))
+            ax.set_xlabel("#%d err:%.3f eps:%.3f, ns: %d, out: %d" % 
+                          (self.n, self.err, eps, len(self.filtered), len(self.lenout)+len(self.disout)))
+        #for t in self.trajs:    
+        #    ax.plot(t.xs,t.ys, linestyle='--', marker='o', color='grey')
+        #if self.xp is not None:
+        #    ax.plot(self.xp,self.yp, marker='D', color='r', linewidth=3)
+        #ax.set_xlabel(str(self.n))
 
 def disterr(x1,y1, x2, y2):        
     sd = np.array([x1[0]-x2[0],y1[0]-y2[0]])
@@ -237,20 +237,20 @@ def disterr(x1,y1, x2, y2):
     xrs1, yrs1 = Traj((x1,y1)).getPoints(offs)
     xrs2, yrs2 = Traj((x2,y2)).getPoints(offs)
     return np.sum(np.linalg.norm([xrs1-xrs2, yrs1-yrs2],axis=0))
-
 def zscore(l):
     if len(np.unique(l)) == 1:
         return np.full(len(l),0.)
     return (np.array(l)  - np.mean(l)) / np.std(l)
 
 
-def getResults(d, dismax, lenlim, eps):
+def getResults(d, lenlim, dislim, eps):
     datastring = io.StringIO()
     ts = read_training(d)
+    limits = (lenlim, dislim)
     for i in sorted(ts.keys()):
         ss = SampleSet(i,ts[i])
         # .01 is eps for Ramer–Douglas–Peucker algorithm
-        ss.getAvg(dismax, lenlim, eps)
+        ss.getAvg(limits, eps)
         for x,y in zip(ss.xp, ss.yp):
             print("%1.7f" % x,"%1.7f" % y, file=datastring)
         print(file=datastring)
@@ -262,8 +262,13 @@ def getResults(d, dismax, lenlim, eps):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("use", sys.argv[0], "<data_directory> > solution.txt", file=sys.stderr)
-        print("for example", sys.argv[0], "training_data > tkarasek.txt", file=sys.stderr)
         sys.exit(1)
-    r = getResults(sys.argv[1], 2.13 ,(-1.23,1.8129), .0755)
+    # limiting Z-scores for length
+    lenlim = (-1, 21)
+    # limiting zscores for distance (only cuts the large values)
+    dislim = (-8000., .5)
+    dislim = (-800., 1.0263)
+    lenlim = (-0.5132, .2789)
+    eps = .126
+    r = getResults(sys.argv[1], lenlim, dislim, eps)
     print(r)
-

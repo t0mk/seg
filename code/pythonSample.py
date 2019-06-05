@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
+import os
+import sys
+from math import sqrt
+import numpy as np
 
-# run this as
-# $ ./seg.py <directory_with_training_data> > solution.txt
-#
-# .. it will print solution to stdout
+
+
 
 import os
 import sys
@@ -77,13 +78,21 @@ def median(lst):
     return sortedLst[index] 
 
 
+class OnlyOnePointError(Exception):
+    pass
+
+
 class Traj:
     def __init__(self,xsys):
         xs, ys = xsys
-        self.xs = np.array(xs)
-        self.ys = np.array(ys)
-        self.xd = np.diff(xs)
-        self.yd = np.diff(ys)
+        a = np.array(xsys).T
+        _, filtered = np.unique(a, return_index=True,axis=0)
+        if len(filtered) < 2:
+            raise OnlyOnePointError()
+        self.xs = np.array(xs)[sorted(filtered)]
+        self.ys = np.array(ys)[sorted(filtered)]
+        self.xd = np.diff(self.xs)
+        self.yd = np.diff(self.ys)
         self.dists = np.linalg.norm([self.xd, self.yd],axis=0)
         self.cuts = np.cumsum(self.dists)
         self.d = np.hstack([0,self.cuts])
@@ -101,7 +110,13 @@ class Traj:
 class SampleSet:
     def __init__(self, n, ll):
         # ll is list of tuples [x_array,y_array] for every trajectory in sample
-        self.trajs = [Traj(l) for l in ll]
+        self.trajs = []
+        for l in ll:
+            try:
+                t = Traj(l)
+            except OnlyOnePointError:
+                continue
+            self.trajs.append(t)
         self.n = n
         self.xp = None
         self.yp = None
@@ -137,20 +152,18 @@ class SampleSet:
         self.d = d
         self.l = l
         self.filtix = np.intersect1d(lenix,disix)
-        
-
 
     def getAvg(self, dismax, lenlim, eps):
         self.eps = eps
         self.endpoints()        
         self.getFiltered(dismax, lenlim)
-
-        if len(self.filtix)<5:
-            nbest = 4
+        
+        atleast = 4
+        if len(self.filtix) <= atleast:            
             distrank = np.argsort(self.d)
-            self.disoutix = distrank[nbest:]            
+            self.disoutix = distrank[atleast:]
             self.lenoutix = []
-            self.filtix = distrank[:nbest]
+            self.filtix = distrank[:atleast]
         filtered = [self.trajs[i] for i in self.filtix]
         trajLen = median([len(t.xs) for t in filtered])
         offs = np.linspace(0,1,trajLen*10)
@@ -244,26 +257,79 @@ def zscore(l):
     return (np.array(l)  - np.mean(l)) / np.std(l)
 
 
-def getResults(d, dismax, lenlim, eps):
-    datastring = io.StringIO()
-    ts = read_training(d)
-    for i in sorted(ts.keys()):
-        ss = SampleSet(i,ts[i])
-        # .01 is eps for Ramer–Douglas–Peucker algorithm
-        ss.getAvg(dismax, lenlim, eps)
-        for x,y in zip(ss.xp, ss.yp):
-            print("%1.7f" % x,"%1.7f" % y, file=datastring)
-        print(file=datastring)
-    ret = datastring.getvalue()
-    datastring.close()
+# function that computes the road segment from a trajectory set
+def computeAverageTrajectory(trajectorySet):
+    ls = []
+    for t in trajectorySet:
+        xs = [line["x"] for line in t]
+        ys = [line["y"] for line in t]
+        ls.append((xs,ys))
+    s = SampleSet(0, ls)
+    # best params for training set
+    # s.getAvg(2.13 ,(-1.23,1.8129), .0755)
+    # best params (hopefully) objectively
+    s.getAvg(3.0154, (-1.5897,1.9667), .0058)
+    ret = []
+
+    for x,y in zip(s.xp, s.yp):
+        ret.append({"x": x, "y":y})
     return ret
 
+    
+# function reads all the datasets and returns each of them as part of an array
+def readAllDatasets(inputDirectory):
+    dataSets=[];
+    import os;
+    for i in range(0,len(os.listdir(inputDirectory))):
+        fileName=inputDirectory+"/"+str(i)+".txt";
+        if(os.path.isfile(fileName)):
+            dataSets.append(readTrajectoryDataset(fileName));
+    return dataSets;
+    
+# reads a set of trajectories from a file
+def readTrajectoryDataset(fileName):
+    s = open(fileName, 'r').read();
+    comp=s.split("\n")
+    trajectory=[];
+    trajectorySet=[];
+    for i in range(0,len(comp)):
+        comp[i]=comp[i].split(" ");
+        if(len(comp[i])==2):
+            # to double??
+            point={
+                "x":float(comp[i][0]),
+                "y":float(comp[i][1])
+            }
+            trajectory.append(point);
+        else:
+            trajectorySet.append(trajectory);
+            trajectory=[];
+    
+    return trajectorySet;
+    
+# function for writing the result to a file
+def writeSolution(generatedRoadSegments, outputFile):
+    string="";
+    for i in range(0,len(generatedRoadSegments)):
+        segm=generatedRoadSegments[i];
+        for j in range(0,len(segm)):
+            string+="{:.7f}".format(segm[j]["x"])+" "+"{:.7f}".format(segm[j]["y"])+"\n";
+        string+="\n";
+        
+    f= open(outputFile,"w+");
+    f.write(string);
+    f.close(); 
+    
+# MAIN
+inputDirectory="../training_data";
+outputFile="solution.txt";
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("use", sys.argv[0], "<data_directory> > solution.txt", file=sys.stderr)
-        print("for example", sys.argv[0], "training_data > tkarasek.txt", file=sys.stderr)
-        sys.exit(1)
-    r = getResults(sys.argv[1], 2.13 ,(-1.23,1.8129), .0755)
-    print(r)
+dataSets = readAllDatasets(inputDirectory);
 
+generatedRoadSegments=[];
+for i in range(0,len(dataSets)):
+    generatedRoadSegments.append(computeAverageTrajectory(dataSets[i]));
+
+writeSolution(generatedRoadSegments, outputFile);
+
+    

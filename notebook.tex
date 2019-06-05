@@ -1,0 +1,699 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass[11pt]{article}
+
+    
+    
+    \usepackage[T1]{fontenc}
+    % Nicer default font (+ math font) than Computer Modern for most use cases
+    \usepackage{mathpazo}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % We will generate all images so they have a width \maxwidth. This means
+    % that they will get their normal width if they fit onto the page, but
+    % are scaled down if they would overflow the margins.
+    \makeatletter
+    \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+    \else\Gin@nat@width\fi}
+    \makeatother
+    \let\Oldincludegraphics\includegraphics
+    % Set max figure width to be 80% of text width, for now hardcoded.
+    \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=.8\maxwidth]{#1}}
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionLabelFormat{nolabel}{}
+    \captionsetup{labelformat=nolabel}
+
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    
+
+    
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{segpub}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \subsection{Introduction}\label{introduction}
+
+There was a \href{http://cs.uef.fi/sipu/segments/}{GPS trajectory
+averaging challenge from the UEF Machine Learning group}. It seemed like
+a manageable and interesting little project, so I looked at it.
+
+They supplied normalized trajectory training data in coordintates. The
+coordinates of the trajectories were 2D points with both x and y range
+from 0 to 1.
+
+There are 100 sample groups and each group contains 3+ trajectories
+consisting of 2+ points. I am guessing the trajectories were actually
+measured GPS coords from user devices. The real trajectory or path from
+Openstreetmaps is also given.
+
+\subsection{Input data}\label{input-data}
+
+This is an example of a sample group with 12 trajectories.
+
+\begin{verbatim}
+1. segment:
+ x: [0.   0.44 0.55]
+ y: [0.46 0.35 0.2 ]
+2. segment:
+ x: [0.18 0.29 0.38 0.46 0.53 0.62 0.72]
+ y: [0.32 0.28 0.24 0.2  0.16 0.14 0.09]
+3. segment:
+ x: [0.23 0.33 0.39 0.52]
+ y: [0.43 0.27 0.2  0.06]
+4. segment:
+ x: [0.77 0.62 0.49 0.35 0.2 ]
+ y: [0.25 0.3  0.36 0.43 0.49]
+5. segment:
+ x: [0.77 0.59 0.43 0.28]
+ y: [0.43 0.46 0.51 0.58]
+6. segment:
+ x: [0.81 0.68 0.55 0.42 0.33]
+ y: [0.28 0.36 0.42 0.49 0.59]
+7. segment:
+ x: [0.21 0.33 0.45 0.57 0.69 0.81]
+ y: [0.41 0.36 0.31 0.27 0.26 0.28]
+8. segment:
+ x: [1.   0.91 0.81 0.69 0.55 0.42 0.29]
+ y: [0.68 0.75 0.81 0.85 0.87 0.9  0.92]
+9. segment:
+ x: [0.84 0.72 0.59 0.45 0.23]
+ y: [0.32 0.36 0.4  0.45 0.57]
+10. segment:
+ x: [0.17 0.27 0.39 0.5  0.58 0.62]
+ y: [0.57 0.58 0.52 0.47 0.37 0.25]
+11. segment:
+ x: [0.09 0.18 0.25 0.32 0.4  0.5  0.6 ]
+ y: [0.28 0.24 0.2  0.16 0.11 0.06 0.  ]
+12. segment:
+ x: [0.7  0.59 0.47 0.35 0.23]
+ y: [0.24 0.31 0.35 0.41 0.46]
+\end{verbatim}
+
+Visually, it's (Green are the measured trajectories and black is the
+truth from OpenStreetMap):
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}12}]:} \PY{n}{Image}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{basic.png}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+\texttt{\color{outcolor}Out[{\color{outcolor}12}]:}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_1_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+    \subsection{Implementation}\label{implementation}
+
+I wrote it in Python 3. The only dependency is numpy. I tried to use the
+numpy arrauy operations wherever possible. I use a lot of the
+\texttt{linalg.norm} function, which is useful for computing eucledian
+distance.
+
+My first idea was just to fit all the points by least squares and get
+intercept and slope of regression line. That had several problems: * the
+trajectories might be vertical, causing the slope reach infinity. This
+could be fixed with converting it to angle with arctan. * sometimes the
+trajectories and the true path curve - linear regression will not
+capture the curvature * slope and intercept don't capture length,
+obviously an important factor of a geographical trajectory
+
+I had to think harder to properly average arbitrary line segments. I
+came up with following. This is done for each sample group: * Align the
+lines, so that they have the same direction (more on alignment below). *
+Drop outliers (more on outlier detection below) * Find median of the
+number of points in a line a sample group * Define evenly linearly
+spaced list of \textless{}median\textgreater{} offsets, from 0 to 1.
+E.g. if the median was 6, the list of 6 offsets would be {[}0, .2, .4.
+.6. .8. 1{]} * Find points on every segment in a group, for every
+offset, and average the points on correspoding offsets. * (2 previous
+bulletpoints are done in class Traj in my code) * Resulting vector of
+averages is the segment average. * Simplify the result line, i.e. drop
+points which don't add to curvature of the line. I use
+https://en.wikipedia.org/wiki/Ramer--Douglas--Peucker\_algorithm for
+that.
+
+The image below illustrates average of 2 (blue) lines. First line has 16
+points (15 segments), second has 14 points (13 segments). Median is 15 -
+we define offset array \texttt{np.linspace(0,1,15)} and we get points on
+both of the lines on those offsets . 0 is the beginning and 1 is the end
+of the line. We then average the points, and we get 15-points result
+line (red).
+
+I later found out that it's generally helpful to use more sample offsets
+that just the median. I use \texttt{median*10}.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}13}]:} \PY{n}{Image}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{warp.png}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+\texttt{\color{outcolor}Out[{\color{outcolor}13}]:}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_3_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+    I later found out that my averaging is maybe too similar to
+https://en.wikipedia.org/wiki/Dynamic\_time\_warping.
+
+It's not a perfect solution, there are cases where it will not work
+well, but to tune further, I would need more training data.
+
+Class Traj implements the offset evaluation.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}14}]:} \PY{k}{class} \PY{n+nc}{Traj}\PY{p}{:}
+             \PY{k}{def} \PY{n+nf}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,}\PY{n}{xsys}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{xs}\PY{p}{,} \PY{n}{ys} \PY{o}{=} \PY{n}{xsys}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{xs} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{xs}\PY{p}{)}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{ys} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{ys}\PY{p}{)}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{xd} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{diff}\PY{p}{(}\PY{n}{xs}\PY{p}{)}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{yd} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{diff}\PY{p}{(}\PY{n}{ys}\PY{p}{)}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{dists} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{p}{[}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{xd}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{yd}\PY{p}{]}\PY{p}{,}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{cuts} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{cumsum}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{dists}\PY{p}{)}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{d} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{hstack}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{cuts}\PY{p}{]}\PY{p}{)}
+         
+             \PY{c+c1}{\PYZsh{} getPoints gets coordinates of offsets, e.g. for line [0,0][1,0][1,1] and offsets [.3, .7] would}
+             \PY{c+c1}{\PYZsh{} return [.6,0][1,.4]. }
+             \PY{c+c1}{\PYZsh{} Resp. it would return [.6,1],[0,.4] becaseu x and y coords are returned}
+             \PY{c+c1}{\PYZsh{} separate arrays (to make the numpy operations more effective)}
+             \PY{k}{def} \PY{n+nf}{getPoints}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{offsets}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{offdists} \PY{o}{=} \PY{n}{offsets} \PY{o}{*} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{cuts}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}
+                 \PY{n}{ix} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{searchsorted}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{cuts}\PY{p}{,} \PY{n}{offdists}\PY{p}{)}
+                 \PY{n}{offdists} \PY{o}{\PYZhy{}}\PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{d}\PY{p}{[}\PY{n}{ix}\PY{p}{]}
+                 \PY{n}{segoffs} \PY{o}{=} \PY{n}{offdists}\PY{o}{/}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{dists}\PY{p}{[}\PY{n}{ix}\PY{p}{]}
+                 \PY{n}{x} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{xs}\PY{p}{[}\PY{n}{ix}\PY{p}{]} \PY{o}{+} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{xd}\PY{p}{[}\PY{n}{ix}\PY{p}{]}\PY{o}{*}\PY{n}{segoffs}
+                 \PY{n}{y} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{ys}\PY{p}{[}\PY{n}{ix}\PY{p}{]} \PY{o}{+} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{yd}\PY{p}{[}\PY{n}{ix}\PY{p}{]}\PY{o}{*}\PY{n}{segoffs}
+                 \PY{k}{return} \PY{n}{x}\PY{p}{,}\PY{n}{y}
+\end{Verbatim}
+
+
+    function getAvg implements the average of all lines in a group.
+\texttt{dismax} is max z-score for distance and \texttt{lenlim} is a
+tuple for (min\_zscore\_for\_length, max\_zscore\_for\_length).
+\texttt{eps} is epsilon for the Ramer--Douglas--Peucker algorithm (line
+smoothening factor).
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}15}]:}     \PY{k}{def} \PY{n+nf}{getAvg}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{dismax}\PY{p}{,} \PY{n}{lenlim}\PY{p}{,} \PY{n}{eps}\PY{p}{)}\PY{p}{:}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{eps} \PY{o}{=} \PY{n}{eps}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{endpoints}\PY{p}{(}\PY{p}{)}        
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{getFiltered}\PY{p}{(}\PY{n}{dismax}\PY{p}{,} \PY{n}{lenlim}\PY{p}{)}
+         
+                 \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{filtix}\PY{p}{)}\PY{o}{\PYZlt{}}\PY{l+m+mi}{5}\PY{p}{:}
+                     \PY{n}{nbest} \PY{o}{=} \PY{l+m+mi}{4}
+                     \PY{n}{distrank} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{argsort}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{d}\PY{p}{)}
+                     \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{disoutix} \PY{o}{=} \PY{n}{distrank}\PY{p}{[}\PY{n}{nbest}\PY{p}{:}\PY{p}{]}            
+                     \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{lenoutix} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+                     \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{filtix} \PY{o}{=} \PY{n}{distrank}\PY{p}{[}\PY{p}{:}\PY{n}{nbest}\PY{p}{]}
+                 \PY{n}{filtered} \PY{o}{=} \PY{p}{[}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{filtix}\PY{p}{]}
+                 \PY{n}{trajLen} \PY{o}{=} \PY{n}{median}\PY{p}{(}\PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{t}\PY{o}{.}\PY{n}{xs}\PY{p}{)} \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n}{filtered}\PY{p}{]}\PY{p}{)}
+                 \PY{n}{offs} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{n}{trajLen}\PY{o}{*}\PY{l+m+mi}{10}\PY{p}{)}
+                 \PY{n}{xm} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+                 \PY{n}{ym} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+                 \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n}{filtered}\PY{p}{:}
+                     \PY{n}{xs}\PY{p}{,} \PY{n}{ys} \PY{o}{=} \PY{n}{t}\PY{o}{.}\PY{n}{getPoints}\PY{p}{(}\PY{n}{offs}\PY{p}{)}            
+                     \PY{n}{xm}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{xs}\PY{p}{)}
+                     \PY{n}{ym}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{ys}\PY{p}{)}
+                 \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{xp}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{yp} \PY{o}{=} \PY{n+nb}{zip}\PY{p}{(}\PY{o}{*}\PY{n}{rdp}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{xm}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{,}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ym}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{eps}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \subsection{Evaluating - measuring
+error}\label{evaluating---measuring-error}
+
+The training data contain ground truth, so it's good to define a way to
+measure solution error - some sort of distance between my aproximation
+and the true route.
+
+Even though this task deals with line segments, it's not so
+straightforward how to measure error. The lines can have different
+number of segments and they can be oriented wrong. I came up with
+following: * make sure the 2 lines are oriented the same * to ensure we
+have same amount of segment, find 10 equally spaced points on the
+segments. Now we deal with 2 10-segment lines. * find distance between
+each pair of points and sum it -\textgreater{} that is out error
+
+I used the distance error in outlier detection.
+
+In code:
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}16}]:} \PY{c+c1}{\PYZsh{} error between 2 segments: [x1,y2] and [x2,y2]}
+         \PY{k}{def} \PY{n+nf}{disterr}\PY{p}{(}\PY{n}{x1}\PY{p}{,}\PY{n}{y1}\PY{p}{,} \PY{n}{x2}\PY{p}{,} \PY{n}{y2}\PY{p}{)}\PY{p}{:}
+             \PY{n}{sd} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{n}{x1}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{n}{x2}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}\PY{n}{y1}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{n}{y2}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+             \PY{n}{ed} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{n}{x1}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{n}{x2}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}\PY{n}{y1}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{n}{y2}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+             \PY{c+c1}{\PYZsh{} flip the 2nd line, if the lines are oriented differently}
+             \PY{k}{if} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{sd}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{ed}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{x2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{flip}\PY{p}{(}\PY{n}{x2}\PY{p}{)}
+                 \PY{n}{y2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{flip}\PY{p}{(}\PY{n}{y2}\PY{p}{)}
+         
+             \PY{n}{offs} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}
+             \PY{c+c1}{\PYZsh{} Traj.getPoints() gets points from a line on given offsets}
+             \PY{n}{xrs1}\PY{p}{,} \PY{n}{yrs1} \PY{o}{=} \PY{n}{Traj}\PY{p}{(}\PY{p}{(}\PY{n}{x1}\PY{p}{,}\PY{n}{y1}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{getPoints}\PY{p}{(}\PY{n}{offs}\PY{p}{)}
+             \PY{n}{xrs2}\PY{p}{,} \PY{n}{yrs2} \PY{o}{=} \PY{n}{Traj}\PY{p}{(}\PY{p}{(}\PY{n}{x2}\PY{p}{,}\PY{n}{y2}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{getPoints}\PY{p}{(}\PY{n}{offs}\PY{p}{)}
+             \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{p}{[}\PY{n}{xrs1}\PY{o}{\PYZhy{}}\PY{n}{xrs2}\PY{p}{,} \PY{n}{yrs1}\PY{o}{\PYZhy{}}\PY{n}{yrs2}\PY{p}{]}\PY{p}{,}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \subsection{Outlier Detection}\label{outlier-detection}
+
+The goal of outlier detection is to eliminate samples which are not
+believed to be helpful to proper approximation. If a line segment in a
+group is totally off, it's probably not going to contribute to a good
+approximation solution. I tried a couple of measures:
+
+\begin{itemize}
+\tightlist
+\item
+  slope and intercept of least-square regression line - This proved not
+  robust enough, there are curved segments in the training.
+\item
+  length of the line
+\item
+  center distance of a line from the center of the average of all the
+  lines
+\item
+  curvature of the line - the extent of how straight or curved it is
+\item
+  the \texttt{disterr} (from previous code) distace from "raw average"
+  line of a segment. A "raw avergage" line is an average line without
+  any outlier drop. Then, compute the \texttt{disterr} distances for
+  each line in a group and drop those too far away
+\end{itemize}
+
+The idea was to find the most extreme values and throw them away. To
+define the throwaway threshold, I needed to use some normalized
+statistic measure. I thought about percentile, but then I learned about
+z-score. Z-score of a value from a distribution shows how extreme the
+value is. It's normalized in standard deviation units, so it's possible
+to use same limits for various measures.
+
+I picked only the length and the \texttt{disterr} line distance in the
+end, the other measures didn't contribute much further. I pass the upper
+limit for distacne z-score and lower and upper limit for length z-scores
+to the averaging method listed above.
+
+Following images illustrate outlier detection. The left image has length
+zscore limit (-1, 1) in cyan, and distance zscore limit (-9, .3) in
+green. The length limit says that lines shorter than 1 stddev from
+average length, and longer than 1 stddev from average length' will not
+be considered in solution. The distance limit says that lines with
+center further than 0.3 stddev from the center will not be considered in
+solution. The lower limit for distance is not considered - there's no
+issue for lines too close to the center.
+
+Relaxing the limits for outlier can lead to worse solution. The right
+image has zscore limits (-1.5,1) for length, and (-9,2) for distance.
+The error is larger and it's also visually worse.
+
+\begin{itemize}
+\tightlist
+\item
+  green - lines dropped for distance extremity
+\item
+  cyan - lines dropped for length extremity
+\item
+  blue - lines used for approximation
+\item
+  red - approximation
+\item
+  black - truth
+\end{itemize}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}17}]:} \PY{n}{Image}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{outl.png}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+\texttt{\color{outcolor}Out[{\color{outcolor}17}]:}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_11_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+    \subsection{Alignment of orientation}\label{alignment-of-orientation}
+
+The line segments in a group can have different orientation. This is
+very hard to understand from simple visualization, but with the offset
+averaging, it will soon start to show that the direction of the line
+segments must be aligned to work as expected. To illustrate the problem,
+following image shows how the line average is wrong for wrong
+orientation of 2 lines. On the left is the expected solution and on the
+right is the average of counter-oriented lines.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}18}]:} \PY{n}{Image}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ori.png}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+\texttt{\color{outcolor}Out[{\color{outcolor}18}]:}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_13_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+    I use a simplified 2-cluster K-means ("2-means" would probably be the
+proper term) algorithm, to find 2 clusters of endpoints - the two
+clusters are then used for orientiation.
+
+First I compile list of termination points - 2 for each line in the
+proper order, so that it's {[}startpoint{[}l{]} for l in lines{]} ++
+{[}endpoint{[}l{]} for l in lines{]}. The length of the list is
+2*len(lines).
+
+Then I initialize 2 clusters with startpoint and endpoint of the first
+line (guaranteeing that the clusters contain different ends of measured
+trajectory). Then, based on distances to the center of the clusters, I
+label the (start- and end-) points, and then give it 10 more iterations,
+recalculating centers of the clusters, and relabeling accordingly.
+
+In the end, I flip all the lines which have label "1" for startpoint.
+It's done only for the first half of the label list, because the second
+half are endpoints.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}19}]:}     \PY{k}{def} \PY{n+nf}{align}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{cs} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{p}{[}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{xs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{xs}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{p}{,}
+                                \PY{p}{[}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{ys}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{ys}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+                 \PY{n}{xs} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{hstack}\PY{p}{(}\PY{p}{[}\PY{n}{t}\PY{o}{.}\PY{n}{xs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{]} \PY{o}{+} \PY{p}{[}\PY{n}{t}\PY{o}{.}\PY{n}{xs}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{]}\PY{p}{)}
+                 \PY{n}{ys} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{hstack}\PY{p}{(}\PY{p}{[}\PY{n}{t}\PY{o}{.}\PY{n}{ys}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{]} \PY{o}{+} \PY{p}{[}\PY{n}{t}\PY{o}{.}\PY{n}{ys}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{]}\PY{p}{)}
+                 \PY{n}{clabs} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+                 \PY{n}{oldclabs} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+                 \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{:}
+                     \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{xs}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                         \PY{n}{ap} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{p}{[}\PY{n}{xs}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{]}\PY{p}{,}\PY{p}{[}\PY{n}{ys}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+                         \PY{n}{dists} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{ap} \PY{o}{\PYZhy{}} \PY{n}{cs}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+                         \PY{n}{clabs}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{argmin}\PY{p}{(}\PY{n}{dists}\PY{p}{)}\PY{p}{)}
+                     \PY{n}{cx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}
+                         \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{xs}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{clabs}\PY{p}{)}\PY{o}{==}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+                         \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{xs}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{clabs}\PY{p}{)}\PY{o}{==}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+                     \PY{n}{cy} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}
+                         \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ys}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{clabs}\PY{p}{)}\PY{o}{==}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+                         \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ys}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{clabs}\PY{p}{)}\PY{o}{==}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+                     \PY{k}{if} \PY{n}{oldclabs} \PY{o}{==} \PY{n}{clabs}\PY{p}{:}
+                         \PY{k}{break}
+                     \PY{n}{oldclabs} \PY{o}{=} \PY{n}{clabs}
+                     \PY{n}{clabs} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+                 \PY{k}{for} \PY{n}{i}\PY{p}{,}\PY{n}{l} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{clabs}\PY{p}{[}\PY{p}{:}\PY{n+nb}{len}\PY{p}{(}\PY{n}{clabs}\PY{p}{)}\PY{o}{/}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{:}
+                     \PY{k}{if} \PY{n}{l} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{:}
+                         \PY{n}{oldT} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+                         \PY{n}{reversedTraj} \PY{o}{=} \PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{flip}\PY{p}{(}\PY{n}{oldT}\PY{o}{.}\PY{n}{xs}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{flip}\PY{p}{(}\PY{n}{oldT}\PY{o}{.}\PY{n}{ys}\PY{p}{)}\PY{p}{)}
+                         \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{trajs}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{Traj}\PY{p}{(}\PY{n}{reversedTraj}\PY{p}{)}
+                
+\end{Verbatim}
+
+
+    \subsection{Conclusion}\label{conclusion}
+
+There is not enough of the training data to design a good averaging
+solution. Also, it's hard to measure the quality of the approximation
+when certain segment groups obviously off the correct trajectory.
+However, I understand this is a real world world problem, and IRL data
+are not perfect.
+
+I experimentally found good values for the outlier detection. They are
+in the \texttt{seg.py} solution script.
+
+    Following picutre shows solutions in segment groups. Colors are * black
+- ground truth * red - average - my solution * blue - lines used in
+solution * green - lines dropped for being too far from the midline *
+cyan - lines droppped for being too long or too short * magenta - lines
+dropped for both reasons
+
+The text below each picture says its number, \texttt{disterr} error of
+my solution from ground truth, total number of lines in a group, number
+of lines filtered for averaging, number of dropped lines.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}7}]:} \PY{n}{Image}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{all.png}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+\texttt{\color{outcolor}Out[{\color{outcolor}7}]:}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_18_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}
